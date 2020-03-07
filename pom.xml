@@ -2,13 +2,64 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
 
+    <!-- jar包版本信息 -->
+    <modelVersion>4.0.0</modelVersion>
     <groupId>com.yzh</groupId>
     <artifactId>yzh-data</artifactId>
-    <version>1.8-SNAPSHOT</version>
+    <version>1.0</version>
+    <packaging>jar</packaging>
+    <name>${project.artifactId}</name>
+    <description>J based on mybatis-plus data rights plug-in</description>
+    <url>https://github.com/yangbeibei69/yzh-data</url>
 
 
+    <!-- 许可证信息 -->
+    <licenses>
+        <license>
+            <name>The Apache Software License,Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <!-- SCM信息 -->
+    <scm>
+        <connection>scm:git:git@github.com:yangbeibei69/yzh-data.git</connection>
+        <developerConnection>scm:git:git@github.com:yangbeibei69/yzh-data.git</developerConnection>
+        <url>https://github.com/yangbeibei69/yzh-data</url>
+    </scm>
+
+    <!-- 开发者信息 -->
+    <developers>
+        <developer>
+            <name>Zi Hao Yang</name>
+            <email>447468587@qq.com</email>
+            <url>https://github.com/yangbeibei69</url>
+        </developer>
+    </developers>
+
+    <!-- 相关版本 -->
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+    </properties>
+
+
+    <!-- 分布式管理信息 -->
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>maven2</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
+
+    <!-- 引入jar包 -->
     <dependencies>
 
         <!-- Druid -->
@@ -18,6 +69,7 @@
             <version>1.1.13</version>
         </dependency>
 
+        <!-- mybatis-plus -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus</artifactId>
@@ -31,9 +83,136 @@
             <version>3.0.6</version>
         </dependency>
 
-
-
-
     </dependencies>
 
+
+    <build>
+        <pluginManagement>
+            <plugins>
+
+
+                <!-- ===================maven-deploy插件====================== -->
+                <plugin>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                    <executions>
+                        <execution>
+                            <id>default-deploy</id>
+                            <phase>deploy</phase>
+                            <goals>
+                                <goal>deploy</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- ===================sonatype的staging插件====================== -->
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>1.6.7</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <serverId>ossrh</serverId>
+                        <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                        <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    </configuration>
+                </plugin>
+
+                <!-- ===================SCM插件====================== -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-scm-plugin</artifactId>
+                    <version>1.8.1</version>
+                </plugin>
+
+
+
+                <!-- ===================release插件====================== -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.5.3</version>
+                    <configuration>
+                        <mavenExecutorId>forked-path</mavenExecutorId>
+                        <useReleaseProfile>false</useReleaseProfile>
+                        <arguments>-Psonatype-oss-release</arguments>
+                        <pushChanges>false</pushChanges>
+                        <localCheckout>false</localCheckout>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <checkModificationExcludes>
+                            <checkModificationExclude>.idea/</checkModificationExclude>
+                            <checkModificationExclude>.idea/*</checkModificationExclude>
+                            <checkModificationExclude>.idea/libraries/*</checkModificationExclude>
+                            <checkModificationExclude>pom.xml</checkModificationExclude>
+                            <checkModificationExclude>release-pom.xml</checkModificationExclude>
+
+                        </checkModificationExcludes>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-scm-plugin</artifactId>
+                            <version>1.8.1</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
+                <!-- ===================Source jar文件配置====================== -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>2.1.2</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>jar-no-fork</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- ===================生成javadoc配置====================== -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.9.1</version>
+                    <configuration>
+                        <aggregate>true</aggregate>
+                        <charset>UTF-8</charset>
+                        <encoding>UTF-8</encoding>
+                        <docencoding>UTF-8</docencoding>
+                        <additionalparam>-Xdoclint:none</additionalparam>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+
+                <!-- ===================GPG签名加密====================== -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+
+        </pluginManagement>
+    </build>
 </project>
